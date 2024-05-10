@@ -1,36 +1,29 @@
-import os
-from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
-from google.oauth2.service_account import Credentials
+from  Google import Create_Service
 
-def upload_video_to_drive(video_path, folder_id):
-    # Load the credentials from the credentials.json file
-    credentials = Credentials.from_service_account_file('credentials/credentials.json')
+def upload_file(name):
+    CLIENT_SECRET_FILE = "C:/Users/el160/Documents/GitHub/projecte_final/scripts/credentials/creds.json"
+    API_NAME = "drive"
+    API_VERSION = "v3"
+    SCOPES = ["https://www.googleapis.com/auth/drive"]
 
-    # Set up the Drive API client with the loaded credentials
-    drive_service = build('drive', 'v3', credentials=credentials)
+    service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
 
-    # Create a media file upload object
-    media = MediaFileUpload(video_path, mimetype='video/mp4')
+    folder_id = "12kretDoyNNJ6nih-H3JnzUHmvJ75R-Jn"
+    file_names = [f"{name}.mp4"]
+    mime_types = ["video/mp4"]
 
-    # Set the metadata for the file
-    file_metadata = {
-        'name': os.path.basename(video_path),
-        'parents': [folder_id]
-    }
+    for file_name, mime_type in zip(file_names, mime_types):
+        file_metadata = {
+            "name" : file_name,
+            "parents" : [folder_id]
+        }
 
-    # Upload the file to the Drive folder
-    file = drive_service.files().create(
-        body=file_metadata,
-        media_body=media,
-        fields='id'
-    ).execute()
+        media = MediaFileUpload("videos/{0}".format(file_name), mimetype=mime_type)
 
-    print(f"Video uploaded successfully. File ID: {file.get('id')}")
-
-# Specify the path to the video file and the ID of the Drive folder
-video_path = '/path/to/video.mp4'
-folder_id = 'your_folder_id'
-
-# Call the function to upload the video
-upload_video_to_drive(video_path, folder_id)
+        service.files().create(
+            body=file_metadata,
+            media_body = media,
+            fields = "id"
+        ).execute()
+    return True
