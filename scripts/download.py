@@ -1,6 +1,6 @@
 from pytube import YouTube
 import os
-from upload import upload_file
+
 
 # Function to download YouTube video
 def download_video(url, output_path, video_name):
@@ -26,4 +26,4 @@ output_folder = "videos/"
 video_name = str(input("Enter the video name: "))
 video_name1 = video_name + ".mp4"
 download_video(video_url, output_folder, video_name1)
-upload_file(video_name)
+
